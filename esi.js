@@ -1,3 +1,4 @@
+const env = require('dotenv').config({path: __dirname + '/.env'}).parsed
 const SwaggerClient = require('swagger-client')
 const { MongoClient } = require('mongodb')
 const Discord = require('discord.js')
@@ -5,7 +6,6 @@ const dcClient = new Discord.Client()
 const fs = require('fs')
 const { exit } = require('process')
 let channel = null
-const bot_secret_token = "Nzg2MzQyMjIwMTcyMjMwNjg2.X9FAQg.xzNodyOiHCAgnarAb3afsNADoPM"
 
 const client = new MongoClient('mongodb://localhost:27017/?readPreference=primary&useUnifiedTopology=true&ssl=false')
 
@@ -110,7 +110,7 @@ let swagger = new SwaggerClient('https://esi.evetech.net/_latest/swagger.json?da
                     console.log(error)
                 })
             })
-            dcClient.login(bot_secret_token)
+            dcClient.login(env.BOT_TOKEN)
         })
         .catch((response) => {
             if (response.status === 304) {

@@ -1,3 +1,4 @@
+const env = require('dotenv').config({path: __dirname + '/.env'}).parsed
 const statics = require('./func/static')
 const {MongoClient} = require('mongodb')
 const Discord = require('discord.js')
@@ -293,6 +294,4 @@ function transformDate(dateString) {
   return result[1]+'-'+result[2]+'-'+result[3]+' '+result[4]+':'+result[5]
 }
 
-bot_secret_token = "Nzg2MzQyMjIwMTcyMjMwNjg2.X9FAQg.xzNodyOiHCAgnarAb3afsNADoPM"
-
-client.login(bot_secret_token)
+client.login(env.BOT_TOKEN)
