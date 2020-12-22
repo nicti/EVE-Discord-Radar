@@ -1,0 +1,18 @@
+{
+  "dependencies": {
+    "canvas": "^2.6.1",
+    "canvas-to-buffer": "^1.1.1",
+    "concurrently": "^5.3.0",
+    "discord.js": "^12.5.1",
+    "fs": "^0.0.1-security",
+    "mongodb": "^3.6.3",
+    "swagger-client": "^3.12.1",
+    "vega": "^5.17.0"
+  },
+  "scripts": {
+    "start": "concurrently \"node discord.js\" \"node esi.js\"",
+    "dev": "concurrently \"nodemon discord.js\" \"nodemon esi.js\"",
+    "dev-discord": "nodemon discord.js",
+    "dev-esi": "nodemon esi.js"
+  }
+}
