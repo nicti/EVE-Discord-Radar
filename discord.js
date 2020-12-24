@@ -169,16 +169,15 @@ function process(id, name, channel) {
           response.body.systems.forEach(element => {
             mongoClient.db('esidata').collection('npckills').findOne({ system_id: element })
               .then((responseData) => {
-                if (responseData === null) {
-                  return
+                if (responseData !== null) {
+                  Object.keys(responseData.data).forEach(key => {
+                    if (key === 'timestamp') {
+                      //Skip of old data
+                    } else {
+                      values.push({ "Timestamp": transformDate(key), "NPC Kills": responseData.data[key], "System": idArray[responseData.system_id].name })
+                    }
+                  })
                 }
-                Object.keys(responseData.data).forEach(key => {
-                  if (key === 'timestamp') {
-                    //Skip of old data
-                  } else {
-                    values.push({ "Timestamp": transformDate(key), "NPC Kills": responseData.data[key], "System": idArray[responseData.system_id].name })
-                  }
-                })
                 counter++
                 if (counter === response.body.systems.length) {
                   let vspec = vegalite.compile({
