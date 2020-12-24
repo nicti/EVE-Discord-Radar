@@ -11,8 +11,8 @@
     "vega": "^5.17.0"
   },
   "scripts": {
-    "start": "concurrently \"node discord.js\" \"node esi.js\"",
-    "dev": "concurrently \"nodemon discord.js\" \"nodemon esi.js\"",
+    "start-discord": "node discord.js",
+    "start-esi": "node esi.js",
     "dev-discord": "nodemon discord.js",
     "dev-esi": "nodemon esi.js"
   }
