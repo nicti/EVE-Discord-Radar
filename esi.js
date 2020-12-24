@@ -75,7 +75,7 @@ let swagger = new SwaggerClient('https://esi.evetech.net/_latest/swagger.json?da
                                         data: timeline
                                     })
                                         .then((response) => {
-                                            console.log('Sucess for ' + response.insertedId)
+                                            
                                         })
                                         .catch((response) => {
                                             console.log('Failure: ' + response)
