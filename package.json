@@ -8,12 +8,13 @@
     "fs": "^0.0.1-security",
     "mongodb": "^3.6.3",
     "swagger-client": "^3.12.1",
-    "vega": "^5.17.0"
+    "vega": "^5.17.3",
+    "vega-lite": "^4.17.0"
   },
   "scripts": {
     "start-discord": "node discord.js",
     "start-esi": "node esi.js",
-    "dev-discord": "nodemon discord.js",
-    "dev-esi": "nodemon esi.js"
+    "dev-discord": "nodemon --ignore r2c2s.json discord.js",
+    "dev-esi": "nodemon --ignore r2c2s.json esi.js"
   }
 }
