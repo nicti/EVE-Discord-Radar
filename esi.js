@@ -92,16 +92,18 @@ let swagger = new SwaggerClient('https://esi.evetech.net/_latest/swagger.json?da
                                 }
                                 counter++
                                 if (counter === limit) {
-                                    channel.send('Data processing for `' + transformDate(timestamp) + '` done')
-                                    dcClient.destroy()
+                                    channel.send('Data processing for `' + transformDate(timestamp) + '` done').then(() => {
+                                        dcClient.destroy()
+                                    })
                                 }
                             })
                             .catch((response) => {
                                 console.log(response)
                                 counter++
                                 if (counter === limit) {
-                                    channel.send('Data processing for `' + transformDate(timestamp) + '` done')
-                                    dcClient.destroy()
+                                    channel.send('Data processing for `' + transformDate(timestamp) + '` done').then(() => {
+                                        dcClient.destroy()
+                                    })
                                 }
                             })
                     })
