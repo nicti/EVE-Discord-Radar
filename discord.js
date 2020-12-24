@@ -169,6 +169,9 @@ function process(id, name, channel) {
           response.body.systems.forEach(element => {
             mongoClient.db('esidata').collection('npckills').findOne({ system_id: element })
               .then((responseData) => {
+                if (responseData === null) {
+                  return
+                }
                 Object.keys(responseData.data).forEach(key => {
                   if (key === 'timestamp') {
                     //Skip of old data
