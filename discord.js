@@ -217,6 +217,15 @@ function process(id, name, channel) {
             if (key === 'timestamp') {
               //Skip of old data
             } else {
+              if (values.length) {
+                let lastHour = getHour(values[values.length-1].Timestamp)
+                let currentHour = getHour(transformDate(key))
+                let a = 'b'
+                while (parseInt(hourPlusOne(lastHour)) !== currentHour) {
+                  values.push({ "Timestamp": getHourPlusOne(values[values.length-1].Timestamp), "NPC Kills": 0, "System": name })
+                  lastHour = getHour(values[values.length-1].Timestamp)
+                }
+              }
               values.push({ "Timestamp": transformDate(key), "NPC Kills": response.data[key], "System": name })
             }
           })
@@ -254,6 +263,24 @@ function process(id, name, channel) {
 function transformDate(dateString) {
   let result = dateString.match(/(\d\d\d\d)(\d\d)(\d\d)(\d\d)(\d\d)/)
   return result[1] + '-' + result[2] + '-' + result[3] + ' ' + result[4] + ':' + result[5]
+}
+
+function getHour(dateString) {
+  let result = dateString.match(/(\d\d\d\d)\-(\d\d)\-(\d\d) (\d\d)\:(\d\d)/)
+  return parseInt(result[4])
+}
+
+function getHourPlusOne(dateString) {
+  let result = dateString.match(/(\d\d\d\d)\-(\d\d)\-(\d\d) (\d\d)\:(\d\d)/)
+  return result[1] + '-' + result[2] + '-' + result[3] + ' ' + hourPlusOne(result[4]) + ':' + result[5]
+}
+
+function hourPlusOne(i) {
+  let r = parseInt(i)+1
+  if (r === 24) {
+    return '00'
+  }
+  return r.toString().padStart(2,'0')
 }
 
 client.login(env.BOT_TOKEN)
