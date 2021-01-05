@@ -51,7 +51,7 @@ client.on('message', (receivedMessage) => {
     }
     let limit = 0
     if (isNumeric(messageParts[2])) {
-      limit = (praseInt(messageParts[2])*24)
+      limit = (parseInt(messageParts[2])*24)
     }
     swagger.apis.Search.get_search({
       'search': messageParts[1],
