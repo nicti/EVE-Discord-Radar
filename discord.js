@@ -7,6 +7,7 @@ const SwaggerClient = require('swagger-client')
 const canvasToBuffer = require('canvas-to-buffer')
 const vegalite = require('vega-lite')
 const vega = require('vega')
+const { isNumeric } = require('vega-lite')
 
 const mongoClient = new MongoClient('mongodb://localhost:27017/?readPreference=primary&useUnifiedTopology=true&ssl=false')
 mongoClient.connect().then(() => { console.log('MongoDB connected!') })
@@ -41,12 +42,16 @@ client.on('message', (receivedMessage) => {
     return
   }
   let messageParts = receivedMessage.content.split(' ')
-  if (receivedMessage.channel.id === '786343961798639687' && messageParts.length === 2 && messageParts[0] === '!radar') {
+  if ((messageParts.length === 2 || messageParts.length === 3)&& messageParts[0] === '!radar') {
     receivedMessage.channel.startTyping()
     if (messageParts[1].length <= 2) {
       receivedMessage.channel.send(receivedMessage.author.toString() + ' Please use a search term of 3 letters or more!')
       receivedMessage.reactions.removeAll()
       return
+    }
+    let limit = 0
+    if (isNumeric(messageParts[2])) {
+      limit = praseInt(messageParts[2])
     }
     swagger.apis.Search.get_search({
       'search': messageParts[1],
@@ -66,7 +71,7 @@ client.on('message', (receivedMessage) => {
       }
       let ids = regions.concat(consts).concat(systems)
       if (ids.length === 1) {
-        let text = process(ids[0], idArray[ids[0]].name, receivedMessage.channel)
+        let text = process(ids[0], idArray[ids[0]].name, receivedMessage.channel, limit)
       } else if (ids.length > 9) {
         receivedMessage.channel.send('Too many results, please specify your search!')
       } else if (ids.length === 0) {
@@ -132,17 +137,19 @@ client.on('message', (receivedMessage) => {
               let result = filterable.find((value) => {
                 return value.num == filterableNum
               })
-              let text = process(result.id, result.name, receivedMessage.channel)
+              let text = process(result.id, result.name, receivedMessage.channel, limit)
             })
         })
       }
     })
     receivedMessage.channel.stopTyping()
+  } else if (messageParts[0] === '!radar') {
+    receivedMessage.channel.send('Usage: `!radar <search> [<days>]`')
   }
 })
 
 
-function process(id, name, channel) {
+function process(id, name, channel, limit) {
   // determine type of id
   switch (idArray[id].type) {
     case 'region':
@@ -174,12 +181,24 @@ function process(id, name, channel) {
                     if (key === 'timestamp') {
                       //Skip of old data
                     } else {
+                      if (values.length) {
+                        let lastHour = getHour(values[values.length-1].Timestamp)
+                        let currentHour = getHour(transformDate(key))
+                        let a = 'b'
+                        while (parseInt(hourPlusOne(lastHour)) !== currentHour) {
+                          values.push({ "Timestamp": getHourPlusOne(values[values.length-1].Timestamp), "NPC Kills": 0, "System": name })
+                          lastHour = getHour(values[values.length-1].Timestamp)
+                        }
+                      }
                       values.push({ "Timestamp": transformDate(key), "NPC Kills": responseData.data[key], "System": idArray[responseData.system_id].name })
                     }
                   })
                 }
                 counter++
                 if (counter === response.body.systems.length) {
+                  if (limit !== 0) {
+                    values.slice(Math.max(values.length - limit, 0))
+                  }
                   let vspec = vegalite.compile({
                     "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
                     "data": {
@@ -229,6 +248,9 @@ function process(id, name, channel) {
               values.push({ "Timestamp": transformDate(key), "NPC Kills": response.data[key], "System": name })
             }
           })
+          if (limit !== 0) {
+            values.slice(Math.max(values.length - limit, 0))
+          }
           let vspec = vegalite.compile({
             "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
             "data": {
