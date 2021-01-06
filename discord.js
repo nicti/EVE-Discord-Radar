@@ -184,7 +184,6 @@ function process(id, name, channel, limit) {
                       if (values.length) {
                         let lastHour = getHour(values[values.length-1].Timestamp)
                         let currentHour = getHour(transformDate(key))
-                        let a = 'b'
                         while (parseInt(hourPlusOne(lastHour)) !== currentHour) {
                           values.push({ "Timestamp": getHourPlusOne(values[values.length-1].Timestamp), "NPC Kills": 0, "System": name })
                           lastHour = getHour(values[values.length-1].Timestamp)
@@ -196,9 +195,6 @@ function process(id, name, channel, limit) {
                 }
                 counter++
                 if (counter === response.body.systems.length) {
-                  if (limit !== 0) {
-                    values.slice(Math.max(values.length - limit, 0))
-                  }
                   let vspec = vegalite.compile({
                     "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
                     "data": {
@@ -239,7 +235,6 @@ function process(id, name, channel, limit) {
               if (values.length) {
                 let lastHour = getHour(values[values.length-1].Timestamp)
                 let currentHour = getHour(transformDate(key))
-                let a = 'b'
                 while (parseInt(hourPlusOne(lastHour)) !== currentHour) {
                   values.push({ "Timestamp": getHourPlusOne(values[values.length-1].Timestamp), "NPC Kills": 0, "System": name })
                   lastHour = getHour(values[values.length-1].Timestamp)
@@ -249,7 +244,7 @@ function process(id, name, channel, limit) {
             }
           })
           if (limit !== 0) {
-            values.slice(Math.max(values.length - limit, 0))
+            values = values.slice(Math.max(values.length - limit, 0))
           }
           let vspec = vegalite.compile({
             "$schema": "https://vega.github.io/schema/vega-lite/v4.json",
